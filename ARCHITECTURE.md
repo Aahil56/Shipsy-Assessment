@@ -1,17 +1,12 @@
 # 🏗️ Architecture Documentation - Task Manager
 
-**Live Application**: [https://shipsy-task-manager.vercel.app/](https://shipsy-task-manager.vercel.app/)  
-**API Documentation**: [Postman Docs](https://documenter.getpostman.com/view/48796480/2sB3QGvCGf)
-
----
 
 ## 📑 Table of Contents
 1. [System Overview](#system-overview)
 2. [Technology Stack](#technology-stack)
-3. [Database Schema](#database-schema)
-4. [API Design](#api-design)
-5. [Data Flow](#data-flow)
-6. [Security](#security)
+3. [API Design](#api-design)
+4. [Data Flow](#data-flow)
+5. [Security](#security)
 
 ---
 
@@ -127,199 +122,6 @@ backend/
 
 ---
 
-## Database Schema
-
-### Users Collection
-
-```javascript
-{
-  _id: ObjectId,              // Auto-generated
-  name: String,               // Required, min 2 chars
-  email: String,              // Required, unique, indexed
-  password: String,           // Required, bcrypt hashed
-  createdAt: Date,            // Auto-generated
-  updatedAt: Date             // Auto-updated
-}
-```
-
-**Indexes**: `{ email: 1 }` (unique)
-
-**Sample Document**:
-```json
-{
-  "_id": "507f1f77bcf86cd799439011",
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy",
-  "createdAt": "2025-10-05T10:30:00.000Z",
-  "updatedAt": "2025-10-05T10:30:00.000Z"
-}
-```
-
----
-
-### Tasks Collection
-
-```javascript
-{
-  _id: ObjectId,                    // Auto-generated
-  title: String,                    // Required, trimmed
-  status: String,                   // Enum: "Pending", "In Progress", "Done"
-  isCompleted: Boolean,             // Auto-set when status = "Done"
-  estimatedHours: Number,           // Required, >= 0
-  actualHours: Number,              // Required, >= 0
-  efficiency: Number,               // ✨ Calculated automatically
-  userId: ObjectId,                 // Reference to users
-  createdAt: Date,                  // Auto-generated
-  updatedAt: Date                   // Auto-updated
-}
-```
-
-**Indexes**: `{ userId: 1, createdAt: -1 }` (compound)
-
-**Calculated Field - Efficiency**:
-```javascript
-efficiency = (estimatedHours / actualHours) * 100
-
-// Examples:
-// Estimated: 5h, Actual: 4h → 125% (ahead of schedule)
-// Estimated: 5h, Actual: 5h → 100% (on time)
-// Estimated: 5h, Actual: 8h → 62.5% (behind schedule)
-```
-
-**Sample Document**:
-```json
-{
-  "_id": "507f1f77bcf86cd799439012",
-  "title": "Implement user authentication",
-  "status": "Done",
-  "isCompleted": true,
-  "estimatedHours": 8,
-  "actualHours": 6,
-  "efficiency": 133.33,
-  "userId": "507f1f77bcf86cd799439011",
-  "createdAt": "2025-10-05T09:00:00.000Z",
-  "updatedAt": "2025-10-05T15:30:00.000Z"
-}
-```
-
----
-
-### Relationships
-
-```
-users (1) ────< (N) tasks
-  _id  ←───────── userId
-
-• One user → Many tasks
-• One task → One user
-• Foreign key: userId in tasks collection
-```
-
----
-
-## API Design
-
-### Endpoints Overview
-
-**Base URL**: `https://shipsy-task-manager.vercel.app`
-
-| Endpoint | Method | Auth | Purpose |
-|----------|--------|------|---------|
-| `/api/auth/register` | POST | No | Create new user |
-| `/api/auth/login` | POST | No | Authenticate user |
-| `/api/tasks` | POST | Yes | Create task |
-| `/api/tasks` | GET | Yes | List tasks (paginated) |
-| `/api/tasks/:id` | PUT | Yes | Update task |
-| `/api/tasks/:id` | DELETE | Yes | Delete task |
-
-📖 **[Full API Documentation](https://documenter.getpostman.com/view/48796480/2sB3QGvCGf)**
-
----
-
-### Authentication Examples
-
-#### Register
-```http
-POST /api/auth/register
-Content-Type: application/json
-
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "secure123"
-}
-
-Response (201):
-{
-  "user": { "id": "...", "name": "John Doe", "email": "john@example.com" },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-
-#### Login
-```http
-POST /api/auth/login
-Content-Type: application/json
-
-{
-  "email": "john@example.com",
-  "password": "secure123"
-}
-
-Response (200):
-{
-  "user": { "id": "...", "name": "John Doe", "email": "john@example.com" },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-
----
-
-### Task Operations
-
-#### Create Task
-```http
-POST /api/tasks
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "title": "Complete API documentation",
-  "status": "Pending",
-  "isCompleted": false,
-  "estimatedHours": 4,
-  "actualHours": 3
-}
-
-Response (201):
-{
-  "_id": "...",
-  "title": "Complete API documentation",
-  "status": "Pending",
-  "efficiency": 133.33,  ← Auto-calculated
-  "userId": "...",
-  "createdAt": "...",
-  "updatedAt": "..."
-}
-```
-
-#### Get Tasks (with Filters)
-```http
-GET /api/tasks?page=1&limit=5&status=Pending&search=api
-Authorization: Bearer <token>
-
-Response (200):
-{
-  "tasks": [ /* array of task objects */ ],
-  "total": 12,
-  "page": 1,
-  "limit": 5,
-  "pages": 3
-}
-```
-
----
 
 ## Data Flow
 
@@ -446,18 +248,6 @@ Response (200):
 ┌─────────▼─────────┐
 │  MongoDB Atlas    │  Database (Cloud)
 └───────────────────┘
-```
-
-### Environment Variables
-
-```env
-PORT=5000
-NODE_ENV=production
-MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/shipsy_tasks
-JWT_SECRET=<64-character-random-string>
-SESSION_SECRET=<64-character-random-string>
-```
-
 ---
 
 ## Features Checklist
@@ -482,21 +272,7 @@ SESSION_SECRET=<64-character-random-string>
 
 ---
 
-## Performance
 
-### Backend Optimizations
-- Database indexing (compound index on userId + createdAt)
-- Parallel queries with `Promise.all()`
-- Lean queries for better performance
-- Pagination to limit response size
-
-### Frontend Optimizations
-- localStorage for token/theme persistence
-- Vanilla JavaScript (no framework overhead)
-- CSS variables for instant theme switching
-- Minimal HTTP requests
-
----
 
 ## Error Handling
 
@@ -532,38 +308,3 @@ SESSION_SECRET=<64-character-random-string>
 
 ---
 
-## Quick Reference
-
-### Project Files
-```
-shipsy/
-├── backend/
-│   ├── server.js           # Express app
-│   ├── config/db.js        # MongoDB connection
-│   ├── models/             # User & Task schemas
-│   ├── routes/             # API endpoints
-│   ├── controllers/        # Business logic
-│   └── middleware/         # JWT auth
-├── frontend/
-│   ├── index.html          # Login/Register
-│   ├── tasks.html          # Task management
-│   ├── script.js           # Client logic
-│   └── styles.css          # Styling + themes
-├── docs/                   # Screenshots & commits
-├── package.json            # Dependencies
-├── vercel.json             # Deployment config
-└── .env                    # Environment variables
-```
-
-### Key Technologies
-- **Backend**: Node.js + Express.js + MongoDB + Mongoose
-- **Auth**: JWT + bcryptjs
-- **Frontend**: HTML + CSS + Vanilla JavaScript
-- **Deployment**: Vercel + MongoDB Atlas
-
----
-
-**Version**: 1.0  
-**Last Updated**: October 2025  
-**Live Demo**: [https://shipsy-task-manager.vercel.app/](https://shipsy-task-manager.vercel.app/)  
-**API Docs**: [Postman Documentation](https://documenter.getpostman.com/view/48796480/2sB3QGvCGf)
