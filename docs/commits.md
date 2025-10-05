@@ -5,10 +5,14 @@ Below is the distribution of commits by hour of the day.
 
 | Hour | Number of Commits |
 |------|--------------------|
-| 09   | 5  |
-| 10   | 12 |
-| 11   | 8  |
-| 12   | 3  |
+| 2  | 00  |
+| 4  | 01  |
+| 3  | 02  |
+| 1  | 14  |
+| 1  | 16  |
+| 1  | 17  |
+| 3  | 20  |
+
 
 > Data generated using:  
 > `git log --date=format:'%H' | sort | uniq -c | sort -nr`
@@ -16,5 +20,5 @@ Below is the distribution of commits by hour of the day.
 ---
 
 ## Git Log Screenshot
-![Git Log Screenshot](./image.png.jpg)
+![Git Log Screenshot](./image.jpg)
 
