@@ -2,7 +2,7 @@ const apiBase = '';
 
 // Theme Management
 function initTheme() {
-	const savedTheme = localStorage.getItem('theme') || 'light';
+	const savedTheme = localStorage.getItem('theme') || 'dark';
 	document.documentElement.setAttribute('data-theme', savedTheme);
 	updateThemeButton(savedTheme);
 }
@@ -22,7 +22,7 @@ function updateThemeButton(theme) {
 }
 
 function toggleTheme() {
-	const current = document.documentElement.getAttribute('data-theme') || 'light';
+	const current = document.documentElement.getAttribute('data-theme') || 'dark';
 	const next = current === 'light' ? 'dark' : 'light';
 	document.documentElement.setAttribute('data-theme', next);
 	localStorage.setItem('theme', next);
