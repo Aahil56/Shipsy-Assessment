@@ -123,6 +123,23 @@ if (document.getElementById('taskForm')) {
 	const pagination = document.getElementById('pagination');
 	const message = document.getElementById('tasksMessage');
 	const emptyState = document.getElementById('emptyState');
+	const addTaskSection = document.getElementById('addTaskSection');
+	const taskCount = document.getElementById('taskCount');
+
+	// Toggle Add Task Form
+	document.getElementById('showAddTaskBtn')?.addEventListener('click', () => {
+		addTaskSection.style.display = 'block';
+		addTaskSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+	});
+
+	document.getElementById('closeAddTaskBtn')?.addEventListener('click', () => {
+		addTaskSection.style.display = 'none';
+	});
+
+	document.getElementById('cancelAddTaskBtn')?.addEventListener('click', () => {
+		addTaskSection.style.display = 'none';
+		document.getElementById('taskForm').reset();
+	});
 
 	document.getElementById('logoutBtn').addEventListener('click', () => {
 		localStorage.removeItem('token');
@@ -138,6 +155,14 @@ if (document.getElementById('taskForm')) {
 		loadTasks();
 	});
 
+	// Enable Enter key for search
+	document.getElementById('search')?.addEventListener('keypress', (e) => {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			document.getElementById('applyFilters').click();
+		}
+	});
+
 	async function loadTasks() {
 		message.textContent = '';
 		message.style.display = 'none';
@@ -148,6 +173,12 @@ if (document.getElementById('taskForm')) {
 			const { tasks, total, page, limit } = await api(`/api/tasks?${params.toString()}`);
 			renderTasks(tasks);
 			renderPagination(total, page, limit);
+			
+			// Update task count
+			if (taskCount) {
+				const filterText = currentStatus || currentSearch ? ' (filtered)' : '';
+				taskCount.textContent = `${total} task${total !== 1 ? 's' : ''}${filterText}`;
+			}
 			
 			// Show/hide empty state
 			if (tasks.length === 0) {
@@ -226,7 +257,8 @@ if (document.getElementById('taskForm')) {
 			};
 			await api('/api/tasks', { method: 'POST', body: JSON.stringify(payload) });
 			(e.target).reset();
-			showMessage(message, 'Task added successfully!', 'success');
+			addTaskSection.style.display = 'none';
+			showMessage(message, '✅ Task added successfully!', 'success');
 			setTimeout(() => { message.style.display = 'none'; }, 3000);
 			loadTasks();
 		} catch (err) {

@@ -15,41 +15,75 @@
 
     <div class="container">
         <header class="header">
-            <h1>📋 Your Tasks</h1>
+            <div class="header-left">
+                <h1>📋 Your Tasks</h1>
+                <span id="taskCount" class="task-count"></span>
+            </div>
             <div class="header-actions">
-                <span id="userGreeting" style="color: var(--text-secondary); margin-right: 12px;"></span>
+                <button id="showAddTaskBtn" class="btn-success">➕ New Task</button>
                 <button id="logoutBtn" class="btn-danger">Logout</button>
             </div>
         </header>
 
-        <section class="controls">
-            <h3>➕ Add New Task</h3>
-            <form id="taskForm" class="inline">
-                <input type="text" id="title" placeholder="Task title" required />
-                <input type="number" id="estimatedHours" placeholder="Est. hours" min="0" step="0.1" required />
-                <input type="number" id="actualHours" placeholder="Act. hours" min="0" step="0.1" required />
-                <select id="status">
-                    <option>Pending</option>
-                    <option>In Progress</option>
-                    <option>Done</option>
-                </select>
-                <button type="submit" class="btn-success">Add Task</button>
-            </form>
+        <!-- Filter & Search Section - Now at the top -->
+        <section class="controls filter-section">
+            <div class="filter-header">
+                <h3>🔍 Filter & Search Tasks</h3>
+                <span class="filter-hint">Find and organize your tasks</span>
+            </div>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="search">Search</label>
+                    <input type="text" id="search" placeholder="Search by title..." />
+                </div>
+                <div class="filter-group">
+                    <label for="filterStatus">Status</label>
+                    <select id="filterStatus">
+                        <option value="">All Status</option>
+                        <option value="Pending">⏳ Pending</option>
+                        <option value="In Progress">🔄 In Progress</option>
+                        <option value="Done">✅ Done</option>
+                    </select>
+                </div>
+                <div class="filter-actions">
+                    <button id="applyFilters" class="btn-primary">🔍 Search</button>
+                    <button id="clearFilters" class="btn-secondary">🔄 Reset</button>
+                </div>
+            </div>
         </section>
 
-        <section class="controls">
-            <h3>🔍 Filter & Search</h3>
-            <div class="filters inline">
-                <select id="filterStatus">
-                    <option value="">All Status</option>
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Done">Done</option>
-                </select>
-                <input type="text" id="search" placeholder="Search by title..." />
-                <button id="applyFilters" class="btn-primary">Apply Filters</button>
-                <button id="clearFilters" class="btn-secondary">Clear</button>
+        <!-- Add Task Form - Collapsible -->
+        <section class="controls add-task-section" id="addTaskSection" style="display: none;">
+            <div class="section-header">
+                <h3>➕ Add New Task</h3>
+                <button id="closeAddTaskBtn" class="btn-icon">✖</button>
             </div>
+            <form id="taskForm" class="task-form-grid">
+                <div class="form-group">
+                    <label for="title">Task Title *</label>
+                    <input type="text" id="title" placeholder="e.g., Complete project documentation" required />
+                </div>
+                <div class="form-group">
+                    <label for="estimatedHours">Estimated Hours *</label>
+                    <input type="number" id="estimatedHours" placeholder="0.0" min="0" step="0.1" required />
+                </div>
+                <div class="form-group">
+                    <label for="actualHours">Actual Hours *</label>
+                    <input type="number" id="actualHours" placeholder="0.0" min="0" step="0.1" required />
+                </div>
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status">
+                        <option>Pending</option>
+                        <option>In Progress</option>
+                        <option>Done</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-success">✓ Add Task</button>
+                    <button type="button" id="cancelAddTaskBtn" class="btn-secondary">Cancel</button>
+                </div>
+            </form>
         </section>
 
         <section class="table-container">
