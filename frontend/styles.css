@@ -126,10 +126,11 @@ body {
 	font-size: 1.1rem;
 }
 
-.auth-cards {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-	gap: 24px;
+/* No longer needed - using single card display */
+.auth-wrapper > .card {
+	max-width: 450px;
+	margin: 0 auto;
+	animation: fadeIn 0.5s ease-in-out;
 }
 
 .card {
@@ -151,6 +152,25 @@ body {
 	margin-bottom: 20px;
 	color: var(--text-primary);
 	font-weight: 600;
+}
+
+.auth-switch {
+	margin-top: 20px;
+	text-align: center;
+	color: var(--text-secondary);
+	font-size: 0.95rem;
+}
+
+.auth-switch a {
+	color: var(--accent-primary);
+	text-decoration: none;
+	font-weight: 600;
+	transition: var(--transition);
+}
+
+.auth-switch a:hover {
+	color: var(--accent-hover);
+	text-decoration: underline;
 }
 
 .form-group {
@@ -580,8 +600,8 @@ button:disabled {
 		font-size: 2rem;
 	}
 
-	.auth-cards {
-		grid-template-columns: 1fr;
+	.auth-wrapper > .card {
+		max-width: 100%;
 	}
 
 	.header {
