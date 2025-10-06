@@ -61,6 +61,7 @@ if (document.getElementById('loginForm')) {
 	const loginForm = document.getElementById('loginForm');
 	const registerForm = document.getElementById('registerForm');
 	const message = document.getElementById('authMessage');
+    const sampleLoginLink = document.getElementById('useSampleLink');
 
 	loginForm.addEventListener('submit', async (e) => {
 		e.preventDefault();
@@ -86,6 +87,17 @@ if (document.getElementById('loginForm')) {
 			btn.textContent = 'Login';
 		}
 	});
+
+    if (sampleLoginLink) {
+        sampleLoginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const emailInput = document.getElementById('loginEmail');
+            const passwordInput = document.getElementById('loginPassword');
+            emailInput.value = 'aahils@gmail.com';
+            passwordInput.value = '123456';
+            // Do not auto-submit; user must click Login to proceed
+        });
+    }
 
 	registerForm.addEventListener('submit', async (e) => {
 		e.preventDefault();
